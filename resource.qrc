@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/bin">
+        <file alias="1.jpg">recycle.jpg</file>
+        <file alias="2.jpg">harmful.jpg</file>
+        <file alias="3.jpg">kitchen.jpg</file>
+        <file alias="4.jpg">other.jpg</file>
+    </qresource>
+</RCC>
