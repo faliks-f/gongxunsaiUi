@@ -6,35 +6,29 @@
 #include <QPalette>
 #include <QMessageBox>
 #include <QFont>
+#include <QTimer>
+#include <QDebug>
 #include "trashwidget.h"
+#include "ipc.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    //setMaximumSize(1024, 600);
+    setMaximumSize(1024, 600);
     setMinimumSize(1024, 600);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-
-    addButton(buttonLayout);
-
-    QVBoxLayout *trashLayout = new QVBoxLayout();
-
-    addTrashWidget(trashLayout);
-
-    QVBoxLayout *centerLayout = new QVBoxLayout(this);
-    centerLayout->addLayout(buttonLayout);
-    centerLayout->addLayout(trashLayout);
-
+    layout();
     connectButton();
+    timerInit();
 }
 
 
 
 Widget::~Widget()
 {
+    deletePipe();
     delete ui;
 }
 
@@ -56,6 +50,32 @@ void Widget::advancedButtonSlot()
 void Widget::setArgButtonSlot()
 {
     QMessageBox::information(this, "Error", "此功能还未开发");
+}
+
+void Widget::handleTimer1Out()
+{
+    char res = readResult();
+    qDebug() << res;
+}
+
+void Widget::layout()
+{
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    addButton(buttonLayout);
+
+    QVBoxLayout *trashLayout = new QVBoxLayout();
+    addTrashWidget(trashLayout);
+
+    QVBoxLayout *tableLayout = new QVBoxLayout();
+    addTable(tableLayout);
+
+    QHBoxLayout *downLayout = new QHBoxLayout();
+    downLayout->addLayout(tableLayout, 4);
+    downLayout->addLayout(trashLayout, 5);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addLayout(buttonLayout);
+    layout->addLayout(downLayout);
 }
 
 void Widget::addButton(QHBoxLayout *layout)
@@ -141,6 +161,21 @@ void Widget::addTrashWidget(QVBoxLayout *trashLayout)
     trashLayout->addLayout(trashLayoutDown);
 }
 
+void Widget::addTable(QVBoxLayout *layout)
+{
+    table = new Table();
+    name = QString(" ");
+    tip = QString("当前垃圾：【%1】  OK！").arg(name);
+    label = new QLabel(tip);
+    label->setAlignment(Qt::AlignCenter);
+    QFont font;
+    font.setBold(true);
+    font.setPointSize(20);
+    label->setFont(font);
+    layout->addWidget(table);
+    layout->addWidget(label);
+}
+
 void Widget::connectButton()
 {
     connect(classifyButton, &QPushButton::clicked, this, &Widget::classifyButtonSlot);
@@ -159,5 +194,13 @@ void Widget::setLabelWithWidget(QLabel *label, TrashWidget *widget, QVBoxLayout 
     layout->addWidget(widget);
     layout->setStretchFactor(labelLayout, 1);
     layout->setStretchFactor(widget, 6);
+}
+
+void Widget::timerInit()
+{
+    timer1 = new QTimer(this);
+    connect(timer1, &QTimer::timeout, this, &Widget::handleTimer1Out);
+
+    timer1->start(1000);
 }
 

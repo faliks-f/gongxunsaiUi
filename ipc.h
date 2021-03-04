@@ -4,5 +4,8 @@
 #include <string>
 
 void startPython(std::string);
+void createPipe();
+char readResult();
+void deletePipe();
 
 #endif // IPC_H

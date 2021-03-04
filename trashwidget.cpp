@@ -11,10 +11,10 @@ TrashWidget::TrashWidget(int pictureIndex, QWidget *parent)
     QString string = QString("存放数量: %1").arg(i);
     label->setText(string);
     QFont font;
-    font.setPointSize(30);
+    font.setPointSize(15);
     font.setBold(true);
     label->setFont(font);
-    label->move(width() * 5 / 8, height() / 6);
+    label->move(width() * 2 / 10, height() / 6);
 }
 
 void TrashWidget::paintEvent(QPaintEvent *event)
@@ -35,5 +35,5 @@ void TrashWidget::paintEvent(QPaintEvent *event)
     }
     painter.setPen(color);
     painter.setBrush(color);
-    painter.drawEllipse(width() * 3 / 6, height() * 3 / 5, height() / 4, height() / 4);
+    painter.drawEllipse(width() * 4 / 7, height() * 3 / 5, height() / 4, height() / 4);
 }
