@@ -9,6 +9,8 @@
 #include <QTimer>
 #include <QDebug>
 #include <pthread.h>
+#include <QMediaPlayer>
+#include <QVideoWidget>
 #include "trashwidget.h"
 #include "ipc.h"
 
@@ -26,20 +28,25 @@ Widget::Widget(QWidget *parent)
     timerInit();
 
     checkReady();
+//    ipcTimer->start();
 }
 
 
 
 Widget::~Widget()
 {
-
     deletePipe();
     delete ui;
 }
 
 void Widget::classifyButtonSlot()
 {
-    ipcTimer->start();
+    videoWidget = new VideoWidget();
+    videoWidget->play();
+    videoWidget->setWindowModality(Qt::ApplicationModal);
+    videoWidget->show();
+    videoWidget->move(x(), y());
+    videoFinishTimer->start();
 }
 
 void Widget::isFullButtonSlot()
@@ -60,6 +67,41 @@ void Widget::setArgButtonSlot()
 void Widget::handleIpcTimer()
 {
     char res = readResult();
+    if (res != '0')
+        qDebug() << res;
+    switch (res)
+    {
+    case 'a':
+        table->addItem("电池", "有害");
+        harmfulWidget->addOne();
+        setTip("电池");
+        break;
+    case 'b':
+        table->addItem("瓶子", "可回收");
+        recoverableWidget->addOne();
+        setTip("瓶子");
+        break;
+    case 'c':
+        table->addItem("易拉罐", "可回收");
+        recoverableWidget->addOne();
+        setTip("易拉罐");
+        break;
+    case 'f':
+        table->addItem("水果", "厨余");
+        kitchenWidget->addOne();
+        setTip("水果");
+        break;
+    case 'i':
+        table->addItem("香烟", "其他");
+        otherWidget->addOne();
+        setTip("香烟");
+        break;
+    case 'v':
+        table->addItem("蔬菜", "厨余");
+        kitchenWidget->addOne();
+        setTip("蔬菜");
+        break;
+    }
 }
 
 void Widget::handleCheckTimer()
@@ -74,6 +116,28 @@ void Widget::handleCheckTimer()
     if (value == 'r')
     {
         ipcFlag = true;
+        QFont font;
+        font.setBold(true);
+        font.setPointSize(20);
+        checkInformationBox->setFont(font);
+        checkInformationBox->setText(QString("Checking! If there is long time, please check the wiring!\n"
+                                     "ipcConnect     [%1]").arg(ipcFlag));
+    }
+}
+
+void Widget::handleVideoFinishTimer()
+{
+    if (videoWidget->getState() == QMediaPlayer::StoppedState)
+    {
+        videoFinishTimer->stop();
+        videoWidget->close();
+        writePipe('p');
+        if (videoWidget != nullptr)
+        {
+            delete videoWidget;
+            videoWidget = nullptr;
+        }
+        ipcTimer->start();
     }
 }
 
@@ -183,8 +247,8 @@ void Widget::addTrashWidget(QVBoxLayout *trashLayout)
 void Widget::addTable(QVBoxLayout *layout)
 {
     table = new Table();
-    name = QString(" ");
-    tip = QString("当前垃圾：【%1】  OK！").arg(name);
+    QString name = QString(" ");
+    QString tip = QString("当前垃圾：【%1】  OK！").arg(name);
     label = new QLabel(tip);
     label->setAlignment(Qt::AlignCenter);
     QFont font;
@@ -224,15 +288,34 @@ void Widget::timerInit()
     checkReadyTimer = new QTimer(this);
     connect(checkReadyTimer, &QTimer::timeout, this, &Widget::handleCheckTimer);
     checkReadyTimer->setInterval(500);
+
+    videoFinishTimer = new QTimer(this);
+    connect(videoFinishTimer, &QTimer::timeout, this, &Widget::handleVideoFinishTimer);
+    videoFinishTimer->setInterval(1000);
 }
 
 void Widget::checkReady()
 {
     checkInformationBox = new QMessageBox(this);
-    checkInformationBox->setText("Checking! If there is long time, please check the wiring,");
+    QFont font;
+    font.setBold(true);
+    font.setPointSize(20);
+    checkInformationBox->setFont(font);
+    checkInformationBox->setText(QString("Checking! If there is long time, please check the wiring!\n"
+                                 "ipcConnect     [%1]").arg(ipcFlag));
     checkInformationBox->show();
-    checkInformationBox->move(width() / 2, height() / 2);
+    checkInformationBox->move(width() / 3, height() / 2);
 
     checkReadyTimer->start();
+}
+
+void Widget::setTip(QString name)
+{
+    QString tip = QString("当前垃圾：【%1】  OK！").arg(name);
+    QFont font;
+    font.setBold(true);
+    font.setPointSize(20);
+    label->setFont(font);
+    label->setText(tip);
 }
 

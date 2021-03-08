@@ -74,8 +74,12 @@ void deletePipe()
     unlink(WRITEFILE);
 }
 
-void writePipe(string s)
+void writePipe(char s)
 {
-    int res = strcmp(bufWrite, s.data());
+    int res;
+    bufWrite[0] = s;
+    bufWrite[1] = '\0';
     res = write(fdw, bufWrite, strlen(bufWrite));
+    std::cout << res;
+    memset(bufWrite, 0, sizeof(bufWrite));
 }

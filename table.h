@@ -12,9 +12,9 @@ class Table : public QTableView
 public:
     explicit Table();
 
-private:
     void addItem(QString name, QString category);
 
+private:
     int sequenceNumber = 0;
     QStandardItemModel *model;
 };

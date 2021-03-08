@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "table.h"
+#include "videowidget.h"
 
 class QHBoxLayout;
 class QVBoxLayout;
@@ -31,6 +32,7 @@ private slots:
     void setArgButtonSlot();
     void handleIpcTimer();
     void handleCheckTimer();
+    void handleVideoFinishTimer();
 
 private:
     void layout();
@@ -41,6 +43,7 @@ private:
     void setLabelWithWidget(QLabel *, TrashWidget *, QVBoxLayout *);
     void timerInit();
     void checkReady();
+    void setTip(QString);
 
     QPushButton *classifyButton;
     QPushButton *isFullButton;
@@ -52,14 +55,15 @@ private:
     TrashWidget *kitchenWidget;
     TrashWidget *otherWidget;
 
+    VideoWidget *videoWidget = nullptr;
+
     QLabel *label;
     Table *table;
     QMessageBox *checkInformationBox;
 
-    QString tip;
-    QString name;
     QTimer *ipcTimer;
     QTimer *checkReadyTimer;
+    QTimer *videoFinishTimer;
 
     bool ipcFlag = false;
     bool usartFlag = false;

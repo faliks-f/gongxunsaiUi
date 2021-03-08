@@ -7,7 +7,7 @@
 TrashWidget::TrashWidget(int pictureIndex, QWidget *parent)
 {
     this->pictureIndex = pictureIndex;
-    QLabel *label = new QLabel(this);
+    label = new QLabel(this);
     QString string = QString("存放数量: %1").arg(i);
     label->setText(string);
     QFont font;
@@ -37,3 +37,11 @@ void TrashWidget::paintEvent(QPaintEvent *event)
     painter.setBrush(color);
     painter.drawEllipse(width() * 4 / 7, height() * 3 / 5, height() / 4, height() / 4);
 }
+
+void TrashWidget::addOne()
+{
+    i++;
+    QString string = QString("存放数量: %1").arg(i);
+    label->setText(string);
+}
+

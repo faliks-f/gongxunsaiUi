@@ -3,9 +3,10 @@
 #include <QMediaPlaylist>
 #include <QUrl>
 #include <QLayout>
+#include <QDebug>
 #include <iostream>
 
-VideoWidget::VideoWidget(QVideoWidget *parent) : QVideoWidget(parent)
+VideoWidget::VideoWidget(QWidget *parent) : QVideoWidget(parent)
 {
     setMaximumSize(1024, 600);
     setMinimumSize(1024, 600);
@@ -15,7 +16,16 @@ VideoWidget::VideoWidget(QVideoWidget *parent) : QVideoWidget(parent)
     mediaPlayList->addMedia(QUrl::fromLocalFile(path));
     mediaPlayList->setCurrentIndex(0);
     mediaPlayer->setPlaylist(mediaPlayList);
-    mediaPlayer->play();
     mediaPlayer->setVideoOutput(this);
-    std::cout << mediaPlayer->EndOfMedia;
+    setWindowFlags(Qt::WindowStaysOnTopHint);
+}
+
+QMediaPlayer::State VideoWidget::getState()
+{
+    return mediaPlayer->state();
+}
+
+void VideoWidget::play()
+{
+    mediaPlayer->play();
 }
