@@ -8,6 +8,7 @@
 #include <QFont>
 #include <QTimer>
 #include <QDebug>
+#include <pthread.h>
 #include "trashwidget.h"
 #include "ipc.h"
 
@@ -18,23 +19,27 @@ Widget::Widget(QWidget *parent)
     ui->setupUi(this);
     setMaximumSize(1024, 600);
     setMinimumSize(1024, 600);
+    setWindowFlags(Qt::WindowStaysOnTopHint);
 
     layout();
     connectButton();
     timerInit();
+
+    checkReady();
 }
 
 
 
 Widget::~Widget()
 {
+
     deletePipe();
     delete ui;
 }
 
 void Widget::classifyButtonSlot()
 {
-    QMessageBox::information(this, "Error", "此功能还未开发");
+    ipcTimer->start();
 }
 
 void Widget::isFullButtonSlot()
@@ -52,10 +57,24 @@ void Widget::setArgButtonSlot()
     QMessageBox::information(this, "Error", "此功能还未开发");
 }
 
-void Widget::handleTimer1Out()
+void Widget::handleIpcTimer()
 {
     char res = readResult();
-    qDebug() << res;
+}
+
+void Widget::handleCheckTimer()
+{
+    if (ipcFlag)
+    {
+        checkReadyTimer->stop();
+        checkInformationBox->close();
+    }
+
+    char value = readResult();
+    if (value == 'r')
+    {
+        ipcFlag = true;
+    }
 }
 
 void Widget::layout()
@@ -198,9 +217,22 @@ void Widget::setLabelWithWidget(QLabel *label, TrashWidget *widget, QVBoxLayout 
 
 void Widget::timerInit()
 {
-    timer1 = new QTimer(this);
-    connect(timer1, &QTimer::timeout, this, &Widget::handleTimer1Out);
+    ipcTimer = new QTimer(this);
+    connect(ipcTimer, &QTimer::timeout, this, &Widget::handleIpcTimer);
+    ipcTimer->setInterval(500);
 
-    timer1->start(1000);
+    checkReadyTimer = new QTimer(this);
+    connect(checkReadyTimer, &QTimer::timeout, this, &Widget::handleCheckTimer);
+    checkReadyTimer->setInterval(500);
+}
+
+void Widget::checkReady()
+{
+    checkInformationBox = new QMessageBox(this);
+    checkInformationBox->setText("Checking! If there is long time, please check the wiring,");
+    checkInformationBox->show();
+    checkInformationBox->move(width() / 2, height() / 2);
+
+    checkReadyTimer->start();
 }
 

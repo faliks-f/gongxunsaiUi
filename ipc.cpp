@@ -12,8 +12,13 @@
 
 using namespace std;
 
-char buf[32];
-static int fd;
+char bufRead[32];
+char bufWrite[32];
+static int fdr;
+static int fdw;
+
+const static char READFILE[] = "/home/faliks/Desktop/fifoPythonToCpp.tmp";
+const static char WRITEFILE[] = "/home/faliks/Desktop/fifoCppToPython.tmp";
 
 void startPython(std::string command)
 {
@@ -22,23 +27,25 @@ void startPython(std::string command)
 
 void createPipe()
 {
-    fd = open("/home/faliks/Desktop/fifo.tmp", O_RDWR | O_NONBLOCK);
-    if (-1 == fd)
+    fdr = open(READFILE, O_RDWR | O_NONBLOCK);
+    fdw = open(WRITEFILE, O_RDWR | O_NONBLOCK);
+    if (-1 == fdr || -1 == fdw)
     {
-        fd = mkfifo("/home/faliks/Desktop/fifo.tmp", S_IRWXU);
-        if (-1 == fd)
+        fdr = mkfifo(READFILE, S_IRWXU);
+        fdw = mkfifo(WRITEFILE, S_IRWXU);
+        if (-1 == fdr || -1 == fdw)
         {
             cout << "error mkfifo" << endl;
             exit(1);
         }
-        fd = open("/home/faliks/Desktop/fifo.tmp", O_RDWR | O_NONBLOCK);
-        if (-1 == fd)
+        fdr = open(READFILE, O_RDWR | O_NONBLOCK);
+        fdw = open(WRITEFILE, O_RDWR | O_NONBLOCK);
+        if (-1 == fdr || -1 == fdw)
         {
             cout <<  "error open" << endl;
             exit(1);
         }
     }
-    cout << "create finish" << endl;
 }
 
 
@@ -46,22 +53,29 @@ char readResult()
 {
     int res;
     char value;
-    fd = open("/home/faliks/Desktop/fifo.tmp", O_RDWR | O_NONBLOCK);
-    res = read(fd, buf, sizeof(buf));
+    res = read(fdr, bufRead, sizeof(bufRead));
     if (-1 == res)
     {
         value = '0';
     }
     else
     {
-        value = buf[0];
+        value = bufRead[0];
     }
-    memset(buf, 0, sizeof(buf));
+    memset(bufRead, 0, sizeof(bufRead));
     return value;
 }
 
 void deletePipe()
 {
-    close(fd);
-    unlink("/home/faliks/fifo.tmp");
+    close(fdr);
+    close(fdw);
+    unlink(READFILE);
+    unlink(WRITEFILE);
+}
+
+void writePipe(string s)
+{
+    int res = strcmp(bufWrite, s.data());
+    res = write(fdw, bufWrite, strlen(bufWrite));
 }

@@ -5,4 +5,5 @@
         <file alias="3.jpg">kitchen.jpg</file>
         <file alias="4.jpg">other.jpg</file>
     </qresource>
+    <qresource prefix="/video"/>
 </RCC>

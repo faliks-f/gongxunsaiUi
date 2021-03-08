@@ -6,6 +6,7 @@
 void startPython(std::string);
 void createPipe();
 char readResult();
+void writePipe(std::string);
 void deletePipe();
 
 #endif // IPC_H

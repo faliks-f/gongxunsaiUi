@@ -10,6 +10,7 @@ class QPushButton;
 class TrashWidget;
 class QLabel;
 class QTimer;
+class QMessageBox;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -28,7 +29,9 @@ private slots:
     void isFullButtonSlot();
     void advancedButtonSlot();
     void setArgButtonSlot();
-    void handleTimer1Out();
+    void handleIpcTimer();
+    void handleCheckTimer();
+
 private:
     void layout();
     void addButton(QHBoxLayout *);
@@ -37,6 +40,7 @@ private:
     void connectButton();
     void setLabelWithWidget(QLabel *, TrashWidget *, QVBoxLayout *);
     void timerInit();
+    void checkReady();
 
     QPushButton *classifyButton;
     QPushButton *isFullButton;
@@ -50,9 +54,15 @@ private:
 
     QLabel *label;
     Table *table;
+    QMessageBox *checkInformationBox;
+
     QString tip;
     QString name;
-    QTimer *timer1;
+    QTimer *ipcTimer;
+    QTimer *checkReadyTimer;
+
+    bool ipcFlag = false;
+    bool usartFlag = false;
 
     Ui::Widget *ui;
 };
