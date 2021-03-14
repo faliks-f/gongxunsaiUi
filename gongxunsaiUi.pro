@@ -9,6 +9,7 @@ INCLUDEPATH += .
 QT += widgets
 QT += multimedia
 QT += multimediawidgets
+QT += serialport
 
 # You can make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -22,10 +23,12 @@ QT += multimediawidgets
 HEADERS += trashwidget.h ui_widget.h widget.h \
     ipc.h \
     table.h \
+    usart.h \
     videowidget.h
 FORMS += widget.ui
 SOURCES += main.cpp trashwidget.cpp widget.cpp \
     ipc.cpp \
     table.cpp \
+    usart.cpp \
     videowidget.cpp
 RESOURCES += resource.qrc

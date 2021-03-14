@@ -23,12 +23,12 @@ Widget::Widget(QWidget *parent)
     setMinimumSize(1024, 600);
     setWindowFlags(Qt::WindowStaysOnTopHint);
 
+    usartInit();
     layout();
     connectButton();
     timerInit();
 
-    checkReady();
-//    ipcTimer->start();
+//    checkReady();
 }
 
 
@@ -51,7 +51,24 @@ void Widget::classifyButtonSlot()
 
 void Widget::isFullButtonSlot()
 {
-    QMessageBox::information(this, "Error", "此功能还未开发");
+    if (fullInformationBox == nullptr)
+    {
+        fullInformationBox = new QMessageBox(this);
+        QFont font;
+        font.setBold(true);
+        font.setPointSize(20);
+        fullInformationBox->setFont(font);
+        fullInformationBox->setText(QString("检测中..."));
+        fullInformationBox->show();
+        fullInformationBox->move(width() / 3, height() / 2);
+
+    }
+    fullWorkFlag = true;
+    waitingFlag = true;
+    ipcTimer->stop();
+    usartSendTimer->start();
+    usartWaitTimer->start();
+
 }
 
 void Widget::advancedButtonSlot()
@@ -66,54 +83,63 @@ void Widget::setArgButtonSlot()
 
 void Widget::handleIpcTimer()
 {
+    if (!usartCompleteFlag)
+    {
+        ipcTimer->stop();
+    }
     char res = readResult();
-    if (res != '0')
-        qDebug() << res;
     switch (res)
     {
     case 'a':
         table->addItem("电池", "有害");
         harmfulWidget->addOne();
         setTip("电池");
+        binIndex = 2;
         break;
     case 'b':
         table->addItem("瓶子", "可回收");
         recoverableWidget->addOne();
         setTip("瓶子");
+        binIndex = 1;
         break;
     case 'c':
         table->addItem("易拉罐", "可回收");
         recoverableWidget->addOne();
         setTip("易拉罐");
+        binIndex = 1;
         break;
     case 'f':
         table->addItem("水果", "厨余");
         kitchenWidget->addOne();
         setTip("水果");
+        binIndex = 3;
         break;
     case 'i':
         table->addItem("香烟", "其他");
         otherWidget->addOne();
         setTip("香烟");
+        binIndex = 4;
         break;
     case 'v':
         table->addItem("蔬菜", "厨余");
         kitchenWidget->addOne();
         setTip("蔬菜");
+        binIndex = 3;
         break;
+    default:
+        return;
     }
+    waitingFlag = true;
+    usartCompleteFlag = false;
+    writePipe('s');
+    usartSendTimer->start();
+    usartWaitTimer->start();
 }
 
 void Widget::handleCheckTimer()
 {
-    if (ipcFlag)
-    {
-        checkReadyTimer->stop();
-        checkInformationBox->close();
-    }
-
-    char value = readResult();
-    if (value == 'r')
+    char value1 = readResult();
+    if (value1 == 'r')
     {
         ipcFlag = true;
         QFont font;
@@ -121,7 +147,35 @@ void Widget::handleCheckTimer()
         font.setPointSize(20);
         checkInformationBox->setFont(font);
         checkInformationBox->setText(QString("Checking! If there is long time, please check the wiring!\n"
-                                     "ipcConnect     [%1]").arg(ipcFlag));
+                                     "ipcConnect     [%1]\n"
+                                      "usartConnect  [%2]").arg(ipcFlag).arg(usartFlag));
+    }
+    if (value1 == 'z')
+    {
+        QMessageBox::information(this, "Error", "摄像头没插好");
+    }
+
+    if (!usartFlag)
+    {
+        usart->sendCheck();
+    }
+    int value2 = usart->receive(4);
+    if (value2 == 1)
+    {
+        usartFlag = true;
+        QFont font;
+        font.setBold(true);
+        font.setPointSize(20);
+        checkInformationBox->setFont(font);
+        checkInformationBox->setText(QString("Checking! If there is long time, please check the wiring!\n"
+                                     "ipcConnect     [%1]\n"
+                                     "usartConnect   [%2]").arg(ipcFlag).arg(usartFlag));
+    }
+
+    if (ipcFlag && usartFlag)
+    {
+        checkReadyTimer->stop();
+        checkInformationBox->close();
     }
 }
 
@@ -138,6 +192,71 @@ void Widget::handleVideoFinishTimer()
             videoWidget = nullptr;
         }
         ipcTimer->start();
+        if (!usartWaitTimer->isActive())
+        {
+            usartWaitTimer->start();
+        }
+    }
+}
+
+void Widget::handleUsartWaitTImer()
+{
+    int value = usart->receive(4);
+    if (value == 2)
+    {
+        waitingFlag = false;
+        usartWaitTimer->stop();
+        if (fullWorkFlag)
+        {
+            qDebug() << "clear";
+            usart->clearBuffer();
+            fullTimer->start();
+        }
+        return;
+    }
+
+    if (value == 3)
+    {
+        usartCompleteFlag = true;
+        writePipe('p');
+        ipcTimer->start();
+        usartWaitTimer->stop();
+        return;
+    }
+}
+
+void Widget::handleUsartSendTimer()
+{
+    if (!waitingFlag)
+    {
+        usartSendTimer->stop();
+        return;
+    }
+    if (fullWorkFlag)
+    {
+        usart->sendFullWork();
+    }
+    else
+    {
+        usart->sendDown(binIndex);
+    }
+}
+
+void Widget::handleFullTimer()
+{
+    static int index = 0;
+    if (index == 4)
+    {
+        fullTimer->stop();
+        setFull();
+        return;
+    }
+    int temp = usart->receiveDistance(4);
+    if (temp)
+    {
+        distance[index] = temp;
+        qDebug() << int(temp);
+        ++index;
     }
 }
 
@@ -292,6 +411,27 @@ void Widget::timerInit()
     videoFinishTimer = new QTimer(this);
     connect(videoFinishTimer, &QTimer::timeout, this, &Widget::handleVideoFinishTimer);
     videoFinishTimer->setInterval(1000);
+
+    usartWaitTimer = new QTimer(this);
+    connect(usartWaitTimer, &QTimer::timeout, this, &Widget::handleUsartWaitTImer);
+    usartWaitTimer->setInterval(500);
+
+    usartSendTimer = new QTimer(this);
+    connect(usartSendTimer, &QTimer::timeout, this, &Widget::handleUsartSendTimer);
+    usartSendTimer->setInterval(1000);
+
+    fullTimer = new QTimer(this);
+    connect(fullTimer, &QTimer::timeout, this, &Widget::handleFullTimer);
+    usartSendTimer->setInterval(100);
+}
+
+void Widget::usartInit()
+{
+    usart = new Usart();
+    if (!usart->usartOpen())
+    {
+        QMessageBox::information(this, "Error", "串口打开失败", QMessageBox::Yes);
+    }
 }
 
 void Widget::checkReady()
@@ -302,7 +442,8 @@ void Widget::checkReady()
     font.setPointSize(20);
     checkInformationBox->setFont(font);
     checkInformationBox->setText(QString("Checking! If there is long time, please check the wiring!\n"
-                                 "ipcConnect     [%1]").arg(ipcFlag));
+                                 "ipcConnect     [%1]\n"
+                                 "usartConnect   [%2]").arg(ipcFlag).arg(usartFlag));
     checkInformationBox->show();
     checkInformationBox->move(width() / 3, height() / 2);
 
@@ -317,5 +458,20 @@ void Widget::setTip(QString name)
     font.setPointSize(20);
     label->setFont(font);
     label->setText(tip);
+}
+
+void Widget::setFull()
+{
+    if (fullInformationBox != nullptr)
+    {
+        fullInformationBox->close();
+        delete fullInformationBox;
+        fullInformationBox = nullptr;
+    }
+    int thresh = 30;
+    recoverableWidget->isFullJudge(distance[0] <= thresh);
+    harmfulWidget->isFullJudge(distance[1] <= thresh);
+    kitchenWidget->isFullJudge(distance[2] <= thresh);
+    otherWidget->isFullJudge(distance[3] <= thresh);
 }
 

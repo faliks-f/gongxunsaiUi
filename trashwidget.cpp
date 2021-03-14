@@ -45,3 +45,20 @@ void TrashWidget::addOne()
     label->setText(string);
 }
 
+void TrashWidget::isFullJudge(bool flag)
+{
+    isFull = flag;
+    QString string =  QString(flag?"  已": "  未") + QString("  满 ");
+    QFont font;
+    font.setPointSize(20);
+    font.setBold(true);
+    label->setFont(font);
+    if (flag)
+    {
+        label->setStyleSheet("color:red");
+    }
+    label->setText(string);
+    repaint();
+}
+
+

@@ -12,6 +12,8 @@ public:
     explicit TrashWidget(int pictureIndex, QWidget *parent = nullptr);
     void paintEvent(QPaintEvent *event);
     void addOne();
+    void isFullJudge(bool);
+
 private:
 
     QLabel *label;

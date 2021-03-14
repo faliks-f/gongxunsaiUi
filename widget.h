@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "table.h"
 #include "videowidget.h"
+#include "usart.h"
 
 class QHBoxLayout;
 class QVBoxLayout;
@@ -33,6 +34,9 @@ private slots:
     void handleIpcTimer();
     void handleCheckTimer();
     void handleVideoFinishTimer();
+    void handleUsartWaitTImer();
+    void handleUsartSendTimer();
+    void handleFullTimer();
 
 private:
     void layout();
@@ -42,8 +46,10 @@ private:
     void connectButton();
     void setLabelWithWidget(QLabel *, TrashWidget *, QVBoxLayout *);
     void timerInit();
+    void usartInit();
     void checkReady();
     void setTip(QString);
+    void setFull();
 
     QPushButton *classifyButton;
     QPushButton *isFullButton;
@@ -59,14 +65,26 @@ private:
 
     QLabel *label;
     Table *table;
-    QMessageBox *checkInformationBox;
+    QMessageBox *checkInformationBox = nullptr;
+    QMessageBox *fullInformationBox = nullptr;
 
     QTimer *ipcTimer;
     QTimer *checkReadyTimer;
     QTimer *videoFinishTimer;
+    QTimer *usartWaitTimer;
+    QTimer *usartSendTimer;
+    QTimer *fullTimer;
+
+    Usart *usart;
 
     bool ipcFlag = false;
     bool usartFlag = false;
+    bool waitingFlag = false;
+    bool usartCompleteFlag = true;
+    bool fullWorkFlag = false;
+
+    int binIndex = 0;
+    char distance[4] = {0, 0, 0, 0};
 
     Ui::Widget *ui;
 };
