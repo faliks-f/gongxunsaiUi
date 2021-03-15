@@ -35,6 +35,6 @@ void *startPythonThread(void *args)
 //        writePipe('p');
 //        sleep(1);
 //    }
-//    startPython("/home/faliks/pythonEnvironment/deepLearning/bin/python /home/faliks/Desktop/pythonProject/gongxunsai/predict.py");
+    startPython("python3 /home/pi/gongxunsai/gongxunsai/predict.py");
     return 0;
 }
