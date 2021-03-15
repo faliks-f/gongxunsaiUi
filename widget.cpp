@@ -28,7 +28,7 @@ Widget::Widget(QWidget *parent)
     connectButton();
     timerInit();
 
-//    checkReady();
+    checkReady();
 }
 
 
@@ -192,6 +192,7 @@ void Widget::handleVideoFinishTimer()
             videoWidget = nullptr;
         }
         ipcTimer->start();
+        writePipe('p');
         if (!usartWaitTimer->isActive())
         {
             usartWaitTimer->start();
