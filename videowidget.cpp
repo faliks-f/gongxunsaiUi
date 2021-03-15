@@ -13,7 +13,7 @@ VideoWidget::VideoWidget(QWidget *parent) : QVideoWidget(parent)
     showFullScreen();
     mediaPlayer = new QMediaPlayer(this);
     mediaPlayList = new QMediaPlaylist(mediaPlayer);
-    QString path = "/home/faliks/Desktop/gongxunsaiUi/1.mp4";
+    QString path = "/home/pi/gongxunsai/gongxunsaiUi/1.mp4";
     mediaPlayList->addMedia(QUrl::fromLocalFile(path));
     mediaPlayList->setCurrentIndex(0);
     mediaPlayer->setPlaylist(mediaPlayList);

@@ -17,8 +17,8 @@ char bufWrite[32];
 static int fdr;
 static int fdw;
 
-const static char READFILE[] = "/home/faliks/Desktop/fifoPythonToCpp.tmp";
-const static char WRITEFILE[] = "/home/faliks/Desktop/fifoCppToPython.tmp";
+const static char READFILE[] = "/home/pi/Desktop/fifoPythonToCpp.tmp";
+const static char WRITEFILE[] = "/home/pi/Desktop/fifoCppToPython.tmp";
 
 void startPython(std::string command)
 {
