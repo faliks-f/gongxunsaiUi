@@ -8,8 +8,9 @@
 
 VideoWidget::VideoWidget(QWidget *parent) : QVideoWidget(parent)
 {
-    setMaximumSize(1024, 600);
-    setMinimumSize(1024, 600);
+//    setMaximumSize(1024, 600);
+//    setMinimumSize(1024, 600);
+    showFullScreen();
     mediaPlayer = new QMediaPlayer(this);
     mediaPlayList = new QMediaPlaylist(mediaPlayer);
     QString path = "/home/faliks/Desktop/gongxunsaiUi/1.mp4";

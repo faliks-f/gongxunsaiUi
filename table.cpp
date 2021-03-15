@@ -29,7 +29,7 @@ void Table::addItem(QString name, QString category)
             return;
         }
     }
-    QString category_ = QString("【%1】垃圾").arg(category);
+    QString category_ = QString("【%1】").arg(category);
     model->setItem(sequenceNumber, 0, new QStandardItem(QString("%1").arg(sequenceNumber + 1)));
     model->setItem(sequenceNumber, 1, new QStandardItem(name));
     model->setItem(sequenceNumber, 2, new QStandardItem(QString("%1").arg(1)));
