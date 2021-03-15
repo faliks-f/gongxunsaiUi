@@ -222,8 +222,8 @@ void Widget::handleUsartWaitTImer()
     if (value == 3)
     {
         usartCompleteFlag = true;
-        QMessageBox::information(this, "Complete", "Complete");
         writePipe('p');
+        setTip("OK");
         ipcTimer->start();
         usartWaitTimer->stop();
         return;
