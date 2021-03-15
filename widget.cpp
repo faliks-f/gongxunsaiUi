@@ -438,6 +438,7 @@ void Widget::usartInit()
 void Widget::checkReady()
 {
     checkInformationBox = new QMessageBox(this);
+    checkInformationBox->setWindowFlags(Qt::WindowStaysOnTopHint);
     QFont font;
     font.setBold(true);
     font.setPointSize(20);
