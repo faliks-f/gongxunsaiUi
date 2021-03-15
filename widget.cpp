@@ -19,8 +19,9 @@ Widget::Widget(QWidget *parent)
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    setMaximumSize(1024, 600);
-    setMinimumSize(1024, 600);
+//    setMaximumSize(1024, 600);
+//    setMinimumSize(1024, 600);
+    showFullScreen();
     setWindowFlags(Qt::WindowStaysOnTopHint);
 
     usartInit();
@@ -176,6 +177,8 @@ void Widget::handleCheckTimer()
     {
         checkReadyTimer->stop();
         checkInformationBox->close();
+        delete checkInformationBox;
+        checkInformationBox = nullptr;
     }
 }
 
