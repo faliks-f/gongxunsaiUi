@@ -209,9 +209,10 @@ void Widget::handleUsartWaitTImer()
     if (value == 2)
     {
         waitingFlag = false;
-        usartWaitTimer->stop();
+
         if (fullWorkFlag)
         {
+            usartWaitTimer->stop();
             qDebug() << "clear";
             usart->clearBuffer();
             fullTimer->start();
