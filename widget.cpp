@@ -209,7 +209,6 @@ void Widget::handleUsartWaitTImer()
     if (value == 2)
     {
         waitingFlag = false;
-
         if (fullWorkFlag)
         {
             usartWaitTimer->stop();
@@ -224,7 +223,7 @@ void Widget::handleUsartWaitTImer()
     {
         usartCompleteFlag = true;
         writePipe('p');
-        setTip("OK");
+//        setTip("OK");
         ipcTimer->start();
         usartWaitTimer->stop();
         return;
