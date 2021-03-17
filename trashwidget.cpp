@@ -21,7 +21,7 @@ void TrashWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     QPixmap pixmap;
-    QString path = QString(":/bin/%1.jpg").arg(pictureIndex);
+    QString path = QString(":/bin/%1.png").arg(pictureIndex);
     pixmap.load(path);
     painter.drawPixmap(0, 0, width() / 3, height(), pixmap);
     QColor color;
