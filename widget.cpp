@@ -143,7 +143,7 @@ void Widget::handleIpcTimer()
     }
     waitingFlag = true;
     usartCompleteFlag = false;
-//    writePipe('s');
+    writePipe('s');
     usartSendTimer->start();
     usartWaitTimer->start();
 }
