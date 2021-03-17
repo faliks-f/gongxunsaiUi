@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/bin">
-        <file alias="1.jpg">Image 1.png</file>
-        <file alias="2.jpg">Image 2.png</file>
-        <file alias="3.jpg">Image 3.png</file>
-        <file alias="4.jpg">Image 4.png</file>
+        <file alias="1.png">Image 1.png</file>
+        <file alias="2.png">Image 2.png</file>
+        <file alias="3.png">Image 3.png</file>
+        <file alias="4.png">Image 4.png</file>
     </qresource>
     <qresource prefix="/video"/>
 </RCC>
