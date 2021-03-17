@@ -407,7 +407,7 @@ void Widget::timerInit()
 {
     ipcTimer = new QTimer(this);
     connect(ipcTimer, &QTimer::timeout, this, &Widget::handleIpcTimer);
-    ipcTimer->setInterval(500);
+    ipcTimer->setInterval(100);
 
     checkReadyTimer = new QTimer(this);
     connect(checkReadyTimer, &QTimer::timeout, this, &Widget::handleCheckTimer);
