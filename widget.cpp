@@ -466,7 +466,7 @@ void Widget::checkReady()
 
 void Widget::setTip(QString name)
 {
-    QString tip = QString("当前垃圾：【%1】  OK！").arg(name);
+    QString tip = QString("当前垃圾：【%1】  OK！ timer[%2]").arg(name).arg(ipcTimer->isActive());
     QFont font;
     font.setBold(true);
     font.setPointSize(20);
