@@ -92,16 +92,16 @@ void Widget::handleIpcTimer()
     switch (res)
     {
     case 'a':
-        table->addItem("电池", "有害");
+        table->addItem("果核", "厨余");
         harmfulWidget->addOne();
-        setTip("电池");
-        binIndex = 2;
+        setTip("果核");
+        binIndex = 3;
         break;
     case 'b':
-        table->addItem("瓶子", "可回收");
+        table->addItem("香蕉皮", "厨余");
         recoverableWidget->addOne();
-        setTip("瓶子");
-        binIndex = 1;
+        setTip("香蕉皮");
+        binIndex = 3;
         break;
     case 'c':
         table->addItem("易拉罐", "可回收");
@@ -110,21 +110,21 @@ void Widget::handleIpcTimer()
         binIndex = 1;
         break;
     case 'f':
-        table->addItem("水果", "厨余");
-        kitchenWidget->addOne();
-        setTip("水果");
-        binIndex = 3;
-        break;
-    case 'i':
         table->addItem("香烟", "其他");
-        otherWidget->addOne();
+        kitchenWidget->addOne();
         setTip("香烟");
         binIndex = 4;
         break;
-    case 'v':
-        table->addItem("蔬菜", "厨余");
+    case 'g':
+        table->addItem("瓶子", "可回收");
+        otherWidget->addOne();
+        setTip("瓶子");
+        binIndex = 4;
+        break;
+    case 'o':
+        table->addItem("橘子皮", "厨余");
         kitchenWidget->addOne();
-        setTip("蔬菜");
+        setTip("橘子皮");
         binIndex = 3;
         break;
     default:
