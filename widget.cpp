@@ -93,36 +93,42 @@ void Widget::handleIpcTimer()
     switch (res)
     {
     case 'a':
+        qDebug() << "here add a";
         table->addItem("果核", "厨余");
         harmfulWidget->addOne();
         setTip("果核");
         binIndex = 3;
         break;
     case 'b':
+        qDebug() << "here add b";
         table->addItem("香蕉皮", "厨余");
         recoverableWidget->addOne();
         setTip("香蕉皮");
         binIndex = 3;
         break;
     case 'c':
+        qDebug() << "here add c";
         table->addItem("易拉罐", "可回收");
         recoverableWidget->addOne();
         setTip("易拉罐");
         binIndex = 1;
         break;
     case 'f':
+        qDebug() << "here add f";
         table->addItem("香烟", "其他");
         kitchenWidget->addOne();
         setTip("香烟");
         binIndex = 4;
         break;
     case 'g':
+        qDebug() << "here add g";
         table->addItem("瓶子", "可回收");
         otherWidget->addOne();
         setTip("瓶子");
         binIndex = 4;
         break;
     case 'o':
+        qDebug() << "here add o";
         table->addItem("橘子皮", "厨余");
         kitchenWidget->addOne();
         setTip("橘子皮");
