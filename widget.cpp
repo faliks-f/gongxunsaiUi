@@ -86,7 +86,7 @@ void Widget::handleIpcTimer()
 {
     if (!usartCompleteFlag)
     {
-        ipcTimer->stop();
+//        ipcTimer->stop();
     }
     char res = readResult();
     qDebug() << res;
