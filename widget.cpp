@@ -81,6 +81,7 @@ void Widget::setArgButtonSlot()
 {
     usartCompleteFlag = true;
     ipcTimer->start();
+    writePipe('p');
 }
 
 void Widget::handleIpcTimer()
@@ -90,7 +91,7 @@ void Widget::handleIpcTimer()
         ipcTimer->stop();
         setTip("null");
     }
-    writePipe('p');
+//    writePipe('p');
     char res = readResult();
     qDebug() << res;
     switch (res)
