@@ -79,7 +79,8 @@ void Widget::advancedButtonSlot()
 
 void Widget::setArgButtonSlot()
 {
-    QMessageBox::information(this, "Error", "此功能还未开发");
+    usartCompleteFlag = true;
+    ipcTimer->start();
 }
 
 void Widget::handleIpcTimer()
