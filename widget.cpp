@@ -87,6 +87,7 @@ void Widget::handleIpcTimer()
     if (!usartCompleteFlag)
     {
         ipcTimer->stop();
+        setTip("null");
     }
     char res = readResult();
     qDebug() << res;
@@ -204,6 +205,7 @@ void Widget::handleVideoFinishTimer()
             videoWidget = nullptr;
         }
         ipcTimer->start();
+        setTip("null");
         if (!usartWaitTimer->isActive())
         {
             usartWaitTimer->start();
@@ -233,6 +235,7 @@ void Widget::handleUsartWaitTImer()
         writePipe('p');
 //        setTip("OK");
         ipcTimer->start();
+        setTip("null");
         usartWaitTimer->stop();
         return;
     }
