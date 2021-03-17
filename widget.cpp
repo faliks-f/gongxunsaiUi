@@ -89,6 +89,7 @@ void Widget::handleIpcTimer()
         ipcTimer->stop();
     }
     char res = readResult();
+    qDebug() << res;
     switch (res)
     {
     case 'a':
@@ -139,23 +140,25 @@ void Widget::handleIpcTimer()
 
 void Widget::handleCheckTimer()
 {
-    char value1 = readResult();
-    if (value1 == 'r')
+    if (!ipcFlag)
     {
-        ipcFlag = true;
-        QFont font;
-        font.setBold(true);
-        font.setPointSize(20);
-        checkInformationBox->setFont(font);
-        checkInformationBox->setText(QString("Checking! If there is long time, please check the wiring!\n"
-                                     "ipcConnect     [%1]\n"
-                                      "usartConnect  [%2]").arg(ipcFlag).arg(usartFlag));
+        char value1 = readResult();
+        if (value1 == 'r')
+        {
+            ipcFlag = true;
+            QFont font;
+            font.setBold(true);
+            font.setPointSize(20);
+            checkInformationBox->setFont(font);
+            checkInformationBox->setText(QString("Checking! If there is long time, please check the wiring!\n"
+                                         "ipcConnect     [%1]\n"
+                                          "usartConnect  [%2]").arg(ipcFlag).arg(usartFlag));
+        }
+        if (value1 == 'z')
+        {
+            QMessageBox::information(this, "Error", "摄像头没插好");
+        }
     }
-    if (value1 == 'z')
-    {
-        QMessageBox::information(this, "Error", "摄像头没插好");
-    }
-
     if (!usartFlag)
     {
         usart->sendCheck();
@@ -195,7 +198,6 @@ void Widget::handleVideoFinishTimer()
             videoWidget = nullptr;
         }
         ipcTimer->start();
-        writePipe('p');
         if (!usartWaitTimer->isActive())
         {
             usartWaitTimer->start();
