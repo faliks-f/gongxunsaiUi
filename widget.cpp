@@ -91,7 +91,7 @@ void Widget::handleIpcTimer()
         ipcTimer->stop();
         setTip("null");
     }
-//    writePipe('p');
+    writePipe('p');
     char res = readResult();
     qDebug() << res;
     switch (res)
