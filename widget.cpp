@@ -93,8 +93,9 @@ void Widget::handleIpcTimer()
     }
     writePipe('p');
     char res = readResult();
-    qDebug() << res;
-    switch (res)
+ //   if (usartCompleteFlag) {
+  //  qDebug() << res;
+    { switch (res)
     {
     case 'a':
         qDebug() << "here add a";
@@ -117,6 +118,11 @@ void Widget::handleIpcTimer()
         setTip("易拉罐");
         binIndex = 1;
         break;
+    case 'd':
+    table->addItem("battery","harmful");
+    harmfulWidget->addOne();
+    binIndex=2;
+    break;
     case 'f':
         qDebug() << "here add f";
         table->addItem("香烟", "其他");
@@ -146,6 +152,7 @@ void Widget::handleIpcTimer()
     writePipe('s');
     usartSendTimer->start();
     usartWaitTimer->start();
+    }
 }
 
 void Widget::handleCheckTimer()
